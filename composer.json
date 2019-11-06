@@ -1,0 +1,51 @@
+{
+    "name": "djmattyg007/statemachine",
+    "type": "library",
+    "description": "Matty G's State Machine",
+    "keywords": ["workflow", "petrinet", "place", "transition", "state machine", "statemachine", "state"],
+    "homepage": "https://github.com/djmattyg007/statemachine-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fabien Potencier",
+            "email": "fabien@symfony.com"
+        },
+        {
+            "name": "Grégoire Pineau",
+            "email": "lyrixx@lyrixx.info"
+        },
+        {
+            "name": "Symfony Community",
+            "homepage": "https://symfony.com/contributors"
+        },
+        {
+            "name": "Matthew Gamble",
+            "homepage": "https://github.com/djmattyg007"
+        }
+    ],
+    "require": {
+        "php": "^7.2.9"
+    },
+    "require-dev": {
+        "localheinz/phpstan-rules": "^0.13.0",
+        "phpstan/phpstan": "^0.11.19",
+        "phpstan/phpstan-deprecation-rules": "^0.11.2",
+        "phpstan/phpstan-phpunit": "^0.11.2",
+        "phpstan/phpstan-strict-rules": "^0.11.1",
+        "phpunit/phpunit": "^8.4",
+        "psr/log": "~1.0",
+        "symfony/event-dispatcher": "^4.3",
+        "symfony/expression-language": "^4.3",
+        "symfony/security-core": "^4.3",
+        "symfony/validator": "^4.3"
+    },
+    "conflict": {
+        "symfony/event-dispatcher": "<4.3"
+    },
+    "autoload": {
+        "psr-4": { "MattyG\\StateMachine\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "MattyG\\StateMachine\\Tests\\": "tests/" }
+    }
+}
