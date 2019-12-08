@@ -32,12 +32,13 @@
         "phpstan/phpstan-deprecation-rules": "^0.11.2",
         "phpstan/phpstan-phpunit": "^0.11.2",
         "phpstan/phpstan-strict-rules": "^0.11.1",
-        "phpunit/phpunit": "^8.4",
+        "phpunit/phpunit": "^8.5",
         "psr/log": "~1.0",
-        "symfony/event-dispatcher": "^4.3",
-        "symfony/expression-language": "^4.3",
-        "symfony/security-core": "^4.3",
-        "symfony/validator": "^4.3"
+        "symfony/cache": "~4.3.9",
+        "symfony/event-dispatcher": "~4.3.0",
+        "symfony/expression-language": "~4.3.0",
+        "symfony/security-core": "~4.3.0",
+        "symfony/validator": "~4.3.0"
     },
     "conflict": {
         "symfony/event-dispatcher": "<4.3"
