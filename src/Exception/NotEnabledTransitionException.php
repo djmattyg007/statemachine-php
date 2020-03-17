@@ -17,6 +17,8 @@ namespace MattyG\StateMachine\Exception;
 use MattyG\StateMachine\TransitionBlockerList;
 use MattyG\StateMachine\StateMachineInterface;
 
+use function sprintf;
+
 /**
  * Thrown by a state machine when a not enabled transition is applied on a subject.
  *
@@ -37,7 +39,17 @@ class NotEnabledTransitionException extends TransitionException
      */
     public function __construct(object $subject, string $transitionName, StateMachineInterface $stateMachine, TransitionBlockerList $transitionBlockerList)
     {
-        parent::__construct($subject, $transitionName, $stateMachine, sprintf('Transition "%s" is not valid for subject in state "%s" for state machine "%s".', $transitionName, $stateMachine->getState($subject), $stateMachine->getName()));
+        parent::__construct(
+            $subject,
+            $transitionName,
+            $stateMachine,
+            sprintf(
+                'Transition "%s" is not valid for subject in state "%s" for state machine "%s".',
+                $transitionName,
+                $stateMachine->getState($subject),
+                $stateMachine->getName()
+            )
+        );
 
         $this->transitionBlockerList = $transitionBlockerList;
     }

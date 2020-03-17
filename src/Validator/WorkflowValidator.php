@@ -17,6 +17,9 @@ namespace MattyG\StateMachine\Validator;
 use MattyG\StateMachine\Definition;
 use MattyG\StateMachine\Exception\InvalidDefinitionException;
 
+use function in_array;
+use function sprintf;
+
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
@@ -24,7 +27,9 @@ use MattyG\StateMachine\Exception\InvalidDefinitionException;
 class WorkflowValidator implements DefinitionValidatorInterface
 {
     /**
-     * {@inheritdoc}
+     * @param Definition $definition
+     * @param string $name
+     * @throws InvalidDefinitionException On invalid definition.
      */
     public function validate(Definition $definition, string $name): void
     {
@@ -32,9 +37,15 @@ class WorkflowValidator implements DefinitionValidatorInterface
         $places = array_fill_keys($definition->getPlaces(), []);
         foreach ($definition->getTransitions() as $transition) {
             $from = $transition->getFrom();
-            if (\in_array($transition->getName(), $places[$from], true)) {
-                throw new InvalidDefinitionException(sprintf('All transitions for a place must have a unique name. Multiple transitions named "%s" were found for place "%s" in workflow "%s".', $transition->getName(), $from, $name));
+            if (in_array($transition->getName(), $places[$from], true)) {
+                throw new InvalidDefinitionException(sprintf(
+                    'All transitions for a place must have a unique name. Multiple transitions named "%s" were found for place "%s" in workflow "%s".',
+                    $transition->getName(),
+                    $from,
+                    $name
+                ));
             }
+
             $places[$from][] = $transition->getName();
         }
     }

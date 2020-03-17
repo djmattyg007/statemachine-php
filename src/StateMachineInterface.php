@@ -24,8 +24,29 @@ use MattyG\StateMachine\StateAccessor\StateAccessorInterface;
 interface StateMachineInterface
 {
     /**
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * @return Definition
+     */
+    public function getDefinition(): Definition;
+
+    /**
+     * @return StateAccessorInterface
+     */
+    public function getStateAccessor(): StateAccessorInterface;
+
+    /**
+     * @return MetadataStoreInterface
+     */
+    public function getMetadataStore(): MetadataStoreInterface;
+
+    /**
      * Returns the object's current state.
      *
+     * @param object $subject
      * @return string
      * @throws LogicException
      */
@@ -36,7 +57,7 @@ interface StateMachineInterface
      *
      * @param object $subject
      * @param string $transitionName
-     * @return bool true if the transition is enabled
+     * @return bool True if the transition is enabled.
      */
     public function can(object $subject, string $transitionName): bool;
 
@@ -56,34 +77,14 @@ interface StateMachineInterface
      * @param string $transitionName
      * @param array $context
      * @return string
-     * @throws LogicException If the transition is not applicable
+     * @throws LogicException If the transition is not applicable.
      */
     public function apply(object $subject, string $transitionName, array $context = []): string;
 
     /**
      * Returns all enabled transitions.
      *
-     * @return TransitionInterface[] All enabled transitions
+     * @return TransitionInterface[] All enabled transitions.
      */
     public function getEnabledTransitions(object $subject): array;
-
-    /**
-     * @return string
-     */
-    public function getName(): string;
-
-    /**
-     * @return Definition
-     */
-    public function getDefinition(): Definition;
-
-    /**
-     * @return StateAccessorInterface
-     */
-    public function getStateAccessor(): StateAccessorInterface;
-
-    /**
-     * @var MetadataStoreInterface
-     */
-    public function getMetadataStore(): MetadataStoreInterface;
 }

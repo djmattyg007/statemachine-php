@@ -52,7 +52,7 @@ final class InMemoryMetadataStore implements MetadataStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getStateMachineMetadata(): array
     {
@@ -60,7 +60,8 @@ final class InMemoryMetadataStore implements MetadataStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $place
+     * @return array
      */
     public function getPlaceMetadata(string $place): array
     {
@@ -68,7 +69,8 @@ final class InMemoryMetadataStore implements MetadataStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param TransitionInterface $transition
+     * @return array
      */
     public function getTransitionMetadata(TransitionInterface $transition): array
     {

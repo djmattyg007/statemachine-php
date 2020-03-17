@@ -27,19 +27,27 @@ final class InstanceOfSupportStrategy implements StateMachineSupportStrategyInte
      */
     private $className;
 
+    /**
+     * @param string $className
+     */
     public function __construct(string $className)
     {
         $this->className = $className;
     }
 
     /**
-     * {@inheritdoc}
+     * @param StateMachineInterface $stateMachine
+     * @param object $subject
+     * @return bool
      */
     public function supports(StateMachineInterface $stateMachine, object $subject): bool
     {
         return $subject instanceof $this->className;
     }
 
+    /**
+     * @return string
+     */
     public function getClassName(): string
     {
         return $this->className;

@@ -57,7 +57,7 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getName(): string
     {
@@ -65,7 +65,7 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getFrom(): string
     {
@@ -73,7 +73,7 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getTo(): string
     {
@@ -81,7 +81,9 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param StateMachineInterface $stateMachine
+     * @return bool False if the transition is not available to the subject.
      */
     public function checkIsAvailable(object $subject, StateMachineInterface $stateMachine): bool
     {
@@ -99,7 +101,9 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param StateMachineInterface $stateMachine
+     * @throws LogicException If the subject is not eligible to leave its current state.
      */
     public function checkCanLeave(object $subject, StateMachineInterface $stateMachine): void
     {
@@ -111,7 +115,9 @@ class Transition implements TransitionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param StateMachineInterface $stateMachine
+     * @throws LogicException If the subject is not eligible to enter the new state.
      */
     public function checkCanEnter(object $subject, StateMachineInterface $stateMachine): void
     {

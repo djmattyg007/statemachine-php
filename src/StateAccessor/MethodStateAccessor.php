@@ -15,6 +15,11 @@ namespace MattyG\StateMachine\StateAccessor;
 
 use MattyG\StateMachine\Exception\LogicException;
 
+use function get_class;
+use function method_exists;
+use function sprintf;
+use function ucfirst;
+
 final class MethodStateAccessor implements StateAccessorInterface
 {
     /**
@@ -55,7 +60,7 @@ final class MethodStateAccessor implements StateAccessorInterface
     public function getState(object $subject): string
     {
         if (!method_exists($subject, $this->getterName)) {
-            throw new LogicException(sprintf('Getter method "%s::%s()" does not exist.', \get_class($subject), $this->getterName));
+            throw new LogicException(sprintf('Getter method "%s::%s()" does not exist.', get_class($subject), $this->getterName));
         }
 
         return $subject->{$this->getterName}();
@@ -69,7 +74,7 @@ final class MethodStateAccessor implements StateAccessorInterface
     public function setState(object $subject, string $state, array $context = []): void
     {
         if (!method_exists($subject, $this->setterName)) {
-            throw new LogicException(sprintf('Setter method "%s::%s()" does not exist.', \get_class($subject), $this->setterName));
+            throw new LogicException(sprintf('Setter method "%s::%s()" does not exist.', get_class($subject), $this->setterName));
         }
 
         $subject->{$this->setterName}($state, $context);

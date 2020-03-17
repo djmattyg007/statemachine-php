@@ -41,10 +41,10 @@ final class TransitionBlocker
 
     /**
      * @param string $message
-     * @param string $code       Code is a machine-readable string, usually an UUID
-     * @param array  $parameters This is useful if you would like to pass around the condition values, that
-     *                           blocked the transition. E.g. for a condition "distance must be larger than
-     *                           5 miles", you might want to pass around the value of 5.
+     * @param string $code Code is a machine-readable string, usually an UUID.
+     * @param array $parameters This is useful if you would like to pass around the condition values,
+     *      that blocked the transition. E.g. for a condition "distance must be larger than 5 miles",
+     *      you might want to pass around the value of 5.
      */
     public function __construct(string $message, string $code, array $parameters = [])
     {
@@ -58,26 +58,35 @@ final class TransitionBlocker
      * not enabled.
      *
      * It means the subject is in the wrong place - i.e. not the 'from' place of the transition.
+     *
+     * @param string $state
+     * @return TransitionBlocker
      */
     public static function createBlockedByState(string $state): self
     {
-        return new static('The state does not enable the transition.', self::BLOCKED_BY_STATE, [
+        return new self('The state does not enable the transition.', self::BLOCKED_BY_STATE, [
             'state' => $state,
         ]);
     }
 
+    /**
+     * @return TransitionBlocker
+     */
     public static function createBlockedByAvailabilityGuard(): self
     {
-        return new static('A transition availability guard blocks the transition.', self::BLOCKED_BY_AVAILIBILITY_GUARD);
+        return new self('A transition availability guard blocks the transition.', self::BLOCKED_BY_AVAILIBILITY_GUARD);
     }
 
     /**
      * Creates a blocker that says the transition cannot be made because it has
      * been blocked by the expression guard listener.
+     *
+     * @param string $expression
+     * @return TransitionBlocker
      */
     public static function createBlockedByExpressionGuardListener(string $expression): self
     {
-        return new static('The expression blocks the transition.', self::BLOCKED_BY_EXPRESSION_GUARD_LISTENER, [
+        return new self('The expression blocks the transition.', self::BLOCKED_BY_EXPRESSION_GUARD_LISTENER, [
             'expression' => $expression,
         ]);
     }
@@ -87,22 +96,33 @@ final class TransitionBlocker
      * unknown reason.
      *
      * This blocker code is chiefly for preserving backwards compatibility.
+     *
+     * @return TransitionBlocker
      */
     public static function createUnknown(): self
     {
-        return new static('Unknown reason.', self::UNKNOWN);
+        return new self('Unknown reason.', self::UNKNOWN);
     }
 
+    /**
+     * @return string
+     */
     public function getMessage(): string
     {
         return $this->message;
     }
 
+    /**
+     * @return string
+     */
     public function getCode(): string
     {
         return $this->code;
     }
 
+    /**
+     * @return array
+     */
     public function getParameters(): array
     {
         return $this->parameters;

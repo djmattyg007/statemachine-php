@@ -16,11 +16,11 @@ namespace MattyG\StateMachine\Dumper;
 
 use MattyG\StateMachine\Definition;
 
+use function sprintf;
+
 class StateMachineGraphvizDumper extends GraphvizDumper
 {
     /**
-     * {@inheritdoc}
-     *
      * Dumps the state machine as a graphviz graph.
      *
      * Available options:
@@ -28,6 +28,11 @@ class StateMachineGraphvizDumper extends GraphvizDumper
      *  * graph: The default options for the whole graph
      *  * node: The default options for nodes (places)
      *  * edge: The default options for edges
+     *
+     * @param Definition $definition
+     * @param string|null $state
+     * @param array $options
+     * @return string The representation of the state machine.
      */
     public function dump(Definition $definition, ?string $state = null, array $options = []): string
     {
@@ -38,10 +43,9 @@ class StateMachineGraphvizDumper extends GraphvizDumper
         $options = array_replace_recursive(self::$defaultOptions, $options);
 
         return $this->startDot($options)
-            .$this->addPlaces($places)
-            .$this->addEdges($edges)
-            .$this->endDot()
-        ;
+            . $this->addPlaces($places)
+            . $this->addEdges($edges)
+            . $this->endDot();
     }
 
     /**
@@ -63,6 +67,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
             if (null !== $labelColor) {
                 $attributes['fontcolor'] = $labelColor;
             }
+
             $arrowColor = $stateMachineMetadata->getMetadata('arrow_color', $transition);
             if (null !== $arrowColor) {
                 $attributes['color'] = $arrowColor;

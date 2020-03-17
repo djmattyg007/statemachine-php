@@ -16,8 +16,10 @@ namespace MattyG\StateMachine;
 
 use ArrayIterator;
 use Countable;
+use Iterator;
 use IteratorAggregate;
-use Traversable;
+
+use function count;
 
 /**
  * A list of transition blockers.
@@ -36,18 +38,23 @@ final class TransitionBlockerList implements IteratorAggregate, Countable
      */
     public function __construct(array $blockers = [])
     {
-        $this->blockers = [];
-
         foreach ($blockers as $blocker) {
             $this->add($blocker);
         }
     }
 
+    /**
+     * @param TransitionBlocker $blocker
+     */
     public function add(TransitionBlocker $blocker): void
     {
         $this->blockers[] = $blocker;
     }
 
+    /**
+     * @param string $code
+     * @return bool
+     */
     public function has(string $code): bool
     {
         foreach ($this->blockers as $blocker) {
@@ -73,17 +80,18 @@ final class TransitionBlockerList implements IteratorAggregate, Countable
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return ArrayIterator|TransitionBlocker[]
+     * @return Iterator<TransitionBlocker>
      */
-    public function getIterator(): Traversable
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->blockers);
     }
 
+    /**
+     * @return int
+     */
     public function count(): int
     {
-        return \count($this->blockers);
+        return count($this->blockers);
     }
 }

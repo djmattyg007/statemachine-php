@@ -71,7 +71,43 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return Definition
+     */
+    public function getDefinition(): Definition
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @return StateAccessorInterface
+     */
+    public function getStateAccessor(): StateAccessorInterface
+    {
+        return $this->stateAccessor;
+    }
+
+    /**
+     * @return MetadataStoreInterface
+     */
+    public function getMetadataStore(): MetadataStoreInterface
+    {
+        return $this->definition->getMetadataStore();
+    }
+
+    /**
+     * Returns the object's current state.
+     *
+     * @param object $subject
+     * @return string
+     * @throws LogicException
      */
     public function getState(object $subject): string
     {
@@ -87,7 +123,11 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns true if the transition is enabled.
+     *
+     * @param object $subject
+     * @param string $transitionName
+     * @return bool True if the transition is enabled.
      */
     public function can(object $subject, string $transitionName): bool
     {
@@ -110,7 +150,11 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Builds a TransitionBlockerList to know why a transition is blocked.
+     *
+     * @param object $subject
+     * @param string $transitionName
+     * @return TransitionBlockerList
      */
     public function buildTransitionBlockerList(object $subject, string $transitionName): TransitionBlockerList
     {
@@ -146,7 +190,13 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Fire a transition.
+     *
+     * @param object $subject
+     * @param string $transitionName
+     * @param array $context
+     * @return string
+     * @throws LogicException If the transition is not applicable.
      */
     public function apply(object $subject, string $transitionName, array $context = []): string
     {
@@ -195,7 +245,9 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns all enabled transitions.
+     *
+     * @return TransitionInterface[] All enabled transitions.
      */
     public function getEnabledTransitions(object $subject): array
     {
@@ -210,38 +262,6 @@ class StateMachine implements StateMachineInterface
         }
 
         return $enabledTransitions;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefinition(): Definition
-    {
-        return $this->definition;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStateAccessor(): StateAccessorInterface
-    {
-        return $this->stateAccessor;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetadataStore(): MetadataStoreInterface
-    {
-        return $this->definition->getMetadataStore();
     }
 
     /**

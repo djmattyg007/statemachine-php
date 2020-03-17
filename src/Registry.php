@@ -17,6 +17,11 @@ namespace MattyG\StateMachine;
 use MattyG\StateMachine\Exception\InvalidArgumentException;
 use MattyG\StateMachine\SupportStrategy\StateMachineSupportStrategyInterface;
 
+use function array_map;
+use function count;
+use function get_class;
+use function implode;
+
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
@@ -54,19 +59,19 @@ class Registry
             }
         }
 
-        if (!$matched) {
+        if (count($matched) === 0) {
             throw new InvalidArgumentException(sprintf('Unable to find a state machine for class "%s".', \get_class($subject)));
         }
 
-        if (\count($matched) >= 2) {
-            $names = \array_map(static function (StateMachineInterface $stateMachine): string {
+        if (count($matched) >= 2) {
+            $names = array_map(static function (StateMachineInterface $stateMachine): string {
                 return $stateMachine->getName();
             }, $matched);
 
             throw new InvalidArgumentException(sprintf(
                 'Too many state machines (%s) match this subject (%s); set a different name on each and use the second (name) argument of this method.',
-                \implode(', ', $names),
-                \get_class($subject)
+                implode(', ', $names),
+                get_class($subject)
             ));
         }
 

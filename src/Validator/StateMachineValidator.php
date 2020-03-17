@@ -17,13 +17,17 @@ namespace MattyG\StateMachine\Validator;
 use MattyG\StateMachine\Definition;
 use MattyG\StateMachine\Exception\InvalidDefinitionException;
 
+use function sprintf;
+
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 class StateMachineValidator implements DefinitionValidatorInterface
 {
     /**
-     * {@inheritdoc}
+     * @param Definition $definition
+     * @param string $name
+     * @throws InvalidDefinitionException On invalid definition.
      */
     public function validate(Definition $definition, string $name): void
     {
@@ -32,7 +36,12 @@ class StateMachineValidator implements DefinitionValidatorInterface
             // Enforcing uniqueness of the names of transitions starting at each node
             $from = $transition->getFrom();
             if (isset($transitionFromNames[$from][$transition->getName()])) {
-                throw new InvalidDefinitionException(sprintf('A transition from a place/state must have an unique name. Multiple transitions named "%s" from place/state "%s" were found in state machine "%s".', $transition->getName(), $from, $name));
+                throw new InvalidDefinitionException(sprintf(
+                    'A transition from a place/state must have an unique name. Multiple transitions named "%s" from place/state "%s" were found in state machine "%s".',
+                    $transition->getName(),
+                    $from,
+                    $name
+                ));
             }
 
             $transitionFromNames[$from][$transition->getName()] = true;

@@ -41,13 +41,15 @@ interface MetadataStoreInterface
     public function getTransitionMetadata(TransitionInterface $transition): array;
 
     /**
-     * Returns the metadata for a specific subject.
+     * Returns the metadata for a specific subject. This is a proxy method.
      *
-     * This is a proxy method.
+     * Pass a string subject (the place name) to get place metadata.
+     * Pass a TransitionInterface subject to get transition metadata.
+     * Pass a null subject to get state machine metadata.
      *
-     * @param string|TransitionInterface|null $subject Use null to get state machine metadata
-     *                                                 Use a string (the place name) to get place metadata
-     *                                                 Use a TransitionInterface instance to get transition metadata
+     * @param string $key
+     * @param string|TransitionInterface|null $subject
+     * @return mixed
      */
     public function getMetadata(string $key, $subject = null);
 }

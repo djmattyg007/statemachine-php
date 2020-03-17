@@ -19,6 +19,12 @@ use MattyG\StateMachine\Definition;
 use MattyG\StateMachine\Metadata\MetadataStoreInterface;
 use MattyG\StateMachine\TransitionInterface;
 
+use function is_array;
+use function ltrim;
+use function sprintf;
+use function str_replace;
+use function substr;
+
 /**
  * PlantUmlDumper dumps a state machine as a PlantUML file.
  *
@@ -51,6 +57,14 @@ class PlantUmlDumper implements DumperInterface
         ],
     ];
 
+    /**
+     * Dumps a state machine definition.
+     *
+     * @param Definition $definition
+     * @param string|null $state
+     * @param array $options
+     * @return string The representation of the state machine.
+     */
     public function dump(Definition $definition, ?string $state = null, array $options = []): string
     {
         /** @var array $options */
@@ -83,6 +97,10 @@ class PlantUmlDumper implements DumperInterface
         return $this->startPuml($options).$this->getLines($code).$this->endPuml($options);
     }
 
+    /**
+     * @param array $options
+     * @return string
+     */
     private function startPuml(array $options): string
     {
         $start = '@startuml'.PHP_EOL;
@@ -91,16 +109,29 @@ class PlantUmlDumper implements DumperInterface
         return $start;
     }
 
+    /**
+     * @param array $options
+     * @return string
+     */
     private function endPuml(array $options): string
     {
         return PHP_EOL.'@enduml';
     }
 
+    /**
+     * @param array $code
+     * @return string
+     */
     private function getLines(array $code): string
     {
         return implode(PHP_EOL, $code);
     }
 
+    /**
+     * @param array $options
+     * @param Definition $definition
+     * @return array
+     */
     private function initialize(array $options, Definition $definition): array
     {
         $stateMachineMetadata = $definition->getMetadataStore();
@@ -117,18 +148,18 @@ class PlantUmlDumper implements DumperInterface
         foreach ($definition->getPlaces() as $place) {
             $backgroundColor = $stateMachineMetadata->getMetadata('bg_color', $place);
             if (null !== $backgroundColor) {
-                $key = 'BackgroundColor<<'.$this->getColorId($backgroundColor).'>>';
+                $key = 'BackgroundColor<<' . $this->getColorId($backgroundColor).'>>';
 
                 $options['skinparams']['state'][$key] = $backgroundColor;
             }
         }
 
-        if (isset($options['skinparams']) && \is_array($options['skinparams'])) {
+        if (isset($options['skinparams']) && is_array($options['skinparams'])) {
             foreach ($options['skinparams'] as $skinparamKey => $skinparamValue) {
                 if ($skinparamKey === 'agent') {
                     continue;
                 }
-                if (!\is_array($skinparamValue)) {
+                if (!is_array($skinparamValue)) {
                     $code[] = "skinparam {$skinparamKey} $skinparamValue";
                     continue;
                 }
@@ -143,12 +174,22 @@ class PlantUmlDumper implements DumperInterface
         return $code;
     }
 
+    /**
+     * @param string $string
+     * @return string
+     */
     private function escape(string $string): string
     {
         // It's not possible to escape property double quote, so let's remove it
-        return '"'.str_replace('"', '', $string).'"';
+        return '"' . str_replace('"', '', $string) . '"';
     }
 
+    /**
+     * @param string $place
+     * @param Definition $definition
+     * @param string|null $state
+     * @return string
+     */
     private function getState(string $place, Definition $definition, ?string $state = null): string
     {
         $stateMachineMetadata = $definition->getMetadataStore();
@@ -174,6 +215,12 @@ class PlantUmlDumper implements DumperInterface
         return $output;
     }
 
+    /**
+     * @param MetadataStoreInterface $stateMachineMetadata
+     * @param TransitionInterface $transition
+     * @param string $to
+     * @return string
+     */
     private function getTransitionEscapedWithStyle(MetadataStoreInterface $stateMachineMetadata, TransitionInterface $transition, string $to): string
     {
         $to = $stateMachineMetadata->getMetadata('label', $transition) ?? $to;
@@ -191,16 +238,24 @@ class PlantUmlDumper implements DumperInterface
         return $this->escape($to);
     }
 
+    /**
+     * @param string $color
+     * @return string
+     */
     private function getTransitionColor(string $color): string
     {
         // PUML format requires that color in transition have to be prefixed with “#”.
         if ('#' !== substr($color, 0, 1)) {
-            $color = '#'.$color;
+            $color = '#' . $color;
         }
 
         return sprintf('[%s]', $color);
     }
 
+    /**
+     * @param string $color
+     * @return string
+     */
     private function getColorId(string $color): string
     {
         // Remove “#“ from start of the color name so it can be used as an identifier.

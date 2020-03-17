@@ -16,6 +16,8 @@ namespace MattyG\StateMachine\Exception;
 
 use MattyG\StateMachine\StateMachineInterface;
 
+use function sprintf;
+
 /**
  * Thrown by a state machine when an undefined transition is applied on a subject.
  *
@@ -30,6 +32,11 @@ class UndefinedTransitionException extends TransitionException
      */
     public function __construct(object $subject, string $transitionName, StateMachineInterface $stateMachine)
     {
-        parent::__construct($subject, $transitionName, $stateMachine, sprintf('Transition "%s" is not defined for state machine "%s".', $transitionName, $stateMachine->getName()));
+        parent::__construct(
+            $subject,
+            $transitionName,
+            $stateMachine,
+            sprintf('Transition "%s" is not defined for state machine "%s".', $transitionName, $stateMachine->getName())
+        );
     }
 }

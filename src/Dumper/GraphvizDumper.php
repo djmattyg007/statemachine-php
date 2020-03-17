@@ -16,6 +16,10 @@ namespace MattyG\StateMachine\Dumper;
 
 use MattyG\StateMachine\Definition;
 
+use function implode;
+use function is_bool;
+use function sprintf;
+
 /**
  * GraphvizDumper dumps a state machine as a graphviz file.
  *
@@ -28,6 +32,9 @@ use MattyG\StateMachine\Definition;
  */
 class GraphvizDumper implements DumperInterface
 {
+    /**
+     * @var array
+     */
     protected static $defaultOptions = [
         'graph' => ['ratio' => 'compress', 'rankdir' => 'LR'],
         'node' => ['fontsize' => 9, 'fontname' => 'Arial', 'color' => '#333333', 'fillcolor' => 'lightblue', 'fixedsize' => 'false', 'width' => 1],
@@ -35,8 +42,6 @@ class GraphvizDumper implements DumperInterface
     ];
 
     /**
-     * {@inheritdoc}
-     *
      * Dumps the state machine as a graphviz graph.
      *
      * Available options:
@@ -44,6 +49,11 @@ class GraphvizDumper implements DumperInterface
      *  * graph: The default options for the whole graph
      *  * node: The default options for nodes (places + transitions)
      *  * edge: The default options for edges
+     *
+     * @param Definition $definition
+     * @param string|null $state
+     * @param array $options
+     * @return string The representation of the state machine.
      */
     public function dump(Definition $definition, ?string $state = null, array $options = []): string
     {
@@ -55,10 +65,10 @@ class GraphvizDumper implements DumperInterface
         $options = array_replace_recursive(self::$defaultOptions, $options);
 
         return $this->startDot($options)
-            .$this->addPlaces($places)
-            .$this->addTransitions($transitions)
-            .$this->addEdges($edges)
-            .$this->endDot();
+            . $this->addPlaces($places)
+            . $this->addTransitions($transitions)
+            . $this->addEdges($edges)
+            . $this->endDot();
     }
 
     /**
@@ -157,7 +167,12 @@ class GraphvizDumper implements DumperInterface
         $code = '';
 
         foreach ($transitions as $i => $place) {
-            $code .= sprintf("  transition_%s [label=\"%s\",%s];\n", $this->dotize((string) $i), $this->escape($place['name']), $this->addAttributes($place['attributes']));
+            $code .= sprintf(
+                "  transition_%s [label=\"%s\",%s];\n",
+                $this->dotize((string) $i),
+                $this->escape($place['name']),
+                $this->addAttributes($place['attributes'])
+            );
         }
 
         return $code;
@@ -220,6 +235,8 @@ class GraphvizDumper implements DumperInterface
 
     /**
      * @internal
+     * @param array $options
+     * @return string
      */
     protected function startDot(array $options): string
     {
@@ -232,6 +249,7 @@ class GraphvizDumper implements DumperInterface
 
     /**
      * @internal
+     * @return string
      */
     protected function endDot(): string
     {
@@ -240,6 +258,8 @@ class GraphvizDumper implements DumperInterface
 
     /**
      * @internal
+     * @param string $Id
+     * @return string
      */
     protected function dotize(string $id): string
     {
@@ -248,12 +268,18 @@ class GraphvizDumper implements DumperInterface
 
     /**
      * @internal
+     * @param bool|string $value
+     * @return string
      */
     protected function escape($value): string
     {
-        return \is_bool($value) ? ($value ? '1' : '0') : addslashes($value);
+        return is_bool($value) ? ($value ? '1' : '0') : addslashes($value);
     }
 
+    /**
+     * @param array $attributes
+     * @return string
+     */
     protected function addAttributes(array $attributes): string
     {
         $code = [];
@@ -262,9 +288,13 @@ class GraphvizDumper implements DumperInterface
             $code[] = sprintf('%s="%s"', $k, $this->escape($v));
         }
 
-        return $code ? ' '.implode(' ', $code) : '';
+        return $code ? ' ' . implode(' ', $code) : '';
     }
 
+    /**
+     * @param array $options
+     * @return string
+     */
     private function addOptions(array $options): string
     {
         $code = [];

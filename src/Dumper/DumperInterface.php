@@ -30,7 +30,7 @@ interface DumperInterface
      * @param Definition $definition
      * @param string|null $state
      * @param array $options
-     * @return string The representation of the state machine
+     * @return string The representation of the state machine.
      */
     public function dump(Definition $definition, ?string $state = null, array $options = []): string;
 }
