@@ -99,6 +99,11 @@ class Event extends BaseEvent
         return $this->stateMachine->getName();
     }
 
+    /**
+     * @param string $key
+     * @param object $subject
+     * @return mixed
+     */
     public function getMetadata(string $key, object $subject)
     {
         return $this->stateMachine->getMetadataStore()->getMetadata($key, $subject);

@@ -23,21 +23,57 @@ use MattyG\StateMachine\Event\GuardEvent;
 use MattyG\StateMachine\Exception\InvalidTokenConfigurationException;
 use MattyG\StateMachine\TransitionBlocker;
 
+use function sprintf;
+
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
 class GuardListener
 {
+    /**
+     * @var array
+     */
     private $configuration;
+
+    /**
+     * @var ExpressionLanguage
+     */
     private $expressionLanguage;
+
+    /**
+     * @var TokenStorageInterface
+     */
     private $tokenStorage;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
     private $authorizationChecker;
+
+    /**
+     * @var AuthenticationTrustResolverInterface
+     */
     private $trustResolver;
+
+    /**
+     * @var RoleHierarchyInterface|null
+     */
     private $roleHierarchy;
+
+    /**
+     * @var ValidatorInterface|null
+     */
     private $validator;
 
-    public function __construct(array $configuration, ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, AuthenticationTrustResolverInterface $trustResolver, RoleHierarchyInterface $roleHierarchy = null, ValidatorInterface $validator = null)
-    {
+    public function __construct(
+        array $configuration,
+        ExpressionLanguage $expressionLanguage,
+        TokenStorageInterface $tokenStorage,
+        AuthorizationCheckerInterface $authorizationChecker,
+        AuthenticationTrustResolverInterface $trustResolver,
+        RoleHierarchyInterface $roleHierarchy = null,
+        ValidatorInterface $validator = null
+    ) {
         $this->configuration = $configuration;
         $this->expressionLanguage = $expressionLanguage;
         $this->tokenStorage = $tokenStorage;
@@ -47,7 +83,11 @@ class GuardListener
         $this->validator = $validator;
     }
 
-    public function onTransition(GuardEvent $event, string $eventName)
+    /**
+     * @param GuardEvent $event
+     * @param string $eventName
+     */
+    public function onTransition(GuardEvent $event, string $eventName): void
     {
         if (!isset($this->configuration[$eventName])) {
             return;
@@ -59,6 +99,7 @@ class GuardListener
                 if ($guard->getTransition() !== $event->getTransition()) {
                     continue;
                 }
+
                 $this->validateGuardExpression($event, $guard->getExpression());
             } else {
                 $this->validateGuardExpression($event, $guard);
@@ -66,7 +107,11 @@ class GuardListener
         }
     }
 
-    private function validateGuardExpression(GuardEvent $event, string $expression)
+    /**
+     * @param GuardEvent $event
+     * @param string $expression
+     */
+    private function validateGuardExpression(GuardEvent $event, string $expression): void
     {
         if (!$this->expressionLanguage->evaluate($expression, $this->getVariables($event))) {
             $blocker = TransitionBlocker::createBlockedByExpressionGuardListener($expression);
@@ -74,13 +119,20 @@ class GuardListener
         }
     }
 
-    // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
+    /**
+     * This code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
+     *
+     * @param GuardEvent $event
+     * @return array
+     */
     private function getVariables(GuardEvent $event): array
     {
         $token = $this->tokenStorage->getToken();
 
-        if (null === $token) {
-            throw new InvalidTokenConfigurationException(sprintf('There are no tokens available for state machine %s.', $event->getStateMachineName()));
+        if ($token === null) {
+            throw new InvalidTokenConfigurationException(
+                sprintf('There are no tokens available for state machine %s.', $event->getStateMachineName())
+            );
         }
 
         $variables = [

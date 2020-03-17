@@ -18,7 +18,14 @@ use MattyG\StateMachine\Transition;
 
 class GuardExpression
 {
+    /**
+     * @var Transition
+     */
     private $transition;
+
+    /**
+     * @var string
+     */
     private $expression;
 
     public function __construct(Transition $transition, string $expression)
@@ -27,12 +34,18 @@ class GuardExpression
         $this->expression = $expression;
     }
 
-    public function getTransition()
+    /**
+     * @return Transition
+     */
+    public function getTransition(): Transition
     {
         return $this->transition;
     }
 
-    public function getExpression()
+    /**
+     * @return string
+     */
+    public function getExpression(): string
     {
         return $this->expression;
     }

@@ -18,6 +18,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use MattyG\StateMachine\Event\Event;
 
+use function get_class;
+use function sprintf;
+
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
@@ -39,12 +42,12 @@ class AuditTrailListener implements EventSubscriberInterface
     /**
      * @param Event $event
      */
-    public function onLeave(Event $event)
+    public function onLeave(Event $event): void
     {
         $this->logger->info(sprintf(
             'Leaving "%s" for subject of class "%s" in state machine "%s".',
             $event->getPreviousState(),
-            \get_class($event->getSubject()),
+            get_class($event->getSubject()),
             $event->getStateMachineName()
         ));
     }
@@ -52,13 +55,13 @@ class AuditTrailListener implements EventSubscriberInterface
     /**
      * @param Event $event
      */
-    public function onTransition(Event $event)
+    public function onTransition(Event $event): void
     {
         $transition = $event->getTransition();
         $this->logger->info(sprintf(
             'Transition "%s" for subject of class "%s" in state machine "%s".',
             $transition->getName(),
-            \get_class($event->getSubject()),
+            get_class($event->getSubject()),
             $event->getStateMachineName()
         ));
     }
@@ -66,18 +69,18 @@ class AuditTrailListener implements EventSubscriberInterface
     /**
      * @param Event $event
      */
-    public function onEnter(Event $event)
+    public function onEnter(Event $event): void
     {
         $this->logger->info(sprintf(
             'Entering "%s" for subject of class "%s" in state machine "%s".',
             $event->getNewState(),
-            \get_class($event->getSubject()),
+            get_class($event->getSubject()),
             $event->getStateMachineName()
         ));
     }
 
     /**
-     * {@inheritdoc}
+     * @return array The event names to listen to.
      */
     public static function getSubscribedEvents()
     {

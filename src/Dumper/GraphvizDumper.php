@@ -258,7 +258,7 @@ class GraphvizDumper implements DumperInterface
 
     /**
      * @internal
-     * @param string $Id
+     * @param string $id
      * @return string
      */
     protected function dotize(string $id): string

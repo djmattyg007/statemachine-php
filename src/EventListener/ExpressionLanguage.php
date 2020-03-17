@@ -18,6 +18,9 @@ use Symfony\Component\Security\Core\Authorization\ExpressionLanguage as BaseExpr
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use MattyG\StateMachine\Exception\RuntimeException;
 
+use function count;
+use function sprintf;
+
 /**
  * Adds some function to the default Symfony Security ExpressionLanguage.
  *
@@ -25,26 +28,26 @@ use MattyG\StateMachine\Exception\RuntimeException;
  */
 class ExpressionLanguage extends BaseExpressionLanguage
 {
-    protected function registerFunctions()
+    protected function registerFunctions(): void
     {
         parent::registerFunctions();
 
-        $this->register('is_granted', function ($attributes, $object = 'null') {
+        $this->register('is_granted', function ($attributes, $object = 'null'): string {
             return sprintf('$auth_checker->isGranted(%s, %s)', $attributes, $object);
-        }, function (array $variables, $attributes, $object = null) {
+        }, function (array $variables, $attributes, $object = null): bool {
             return $variables['auth_checker']->isGranted($attributes, $object);
         });
 
-        $this->register('is_valid', function ($object = 'null', $groups = 'null') {
-            return sprintf('0 === count($validator->validate(%s, null, %s))', $object, $groups);
-        }, function (array $variables, $object = null, $groups = null) {
+        $this->register('is_valid', function ($object = 'null', $groups = 'null'): string {
+            return sprintf('count($validator->validate(%s, null, %s)) === 0', $object, $groups);
+        }, function (array $variables, $object = null, $groups = null): bool {
             if (!$variables['validator'] instanceof ValidatorInterface) {
                 throw new RuntimeException('"is_valid" cannot be used as the Validator component is not installed.');
             }
 
             $errors = $variables['validator']->validate($object, null, $groups);
 
-            return 0 === \count($errors);
+            return count($errors) === 0;
         });
     }
 }

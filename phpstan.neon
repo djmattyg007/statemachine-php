@@ -2,12 +2,15 @@ includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
 
+parameters:
+    customRulesetUsed: true
+    checkMissingIterableValueType: false
+
 rules:
-    - Localheinz\PHPStan\Rules\Expressions\NoErrorSuppressionRule
-    - Localheinz\PHPStan\Rules\Expressions\NoEvalRule
-    - Localheinz\PHPStan\Rules\Files\DeclareStrictTypesRule
-    - Localheinz\PHPStan\Rules\Methods\PrivateInFinalClassRule
-    - PHPStan\Rules\Cast\UselessCastRule
+    - Ergebnis\PHPStan\Rules\Expressions\NoErrorSuppressionRule
+    - Ergebnis\PHPStan\Rules\Expressions\NoEvalRule
+    - Ergebnis\PHPStan\Rules\Files\DeclareStrictTypesRule
+    - Ergebnis\PHPStan\Rules\Methods\PrivateInFinalClassRule
     - PHPStan\Rules\DisallowedConstructs\DisallowedImplicitArrayCreationRule
     - PHPStan\Rules\Methods\WrongCaseOfInheritedMethodRule
     - PHPStan\Rules\Operators\OperandInArithmeticPostDecrementRule
@@ -27,3 +30,9 @@ rules:
 services:
     -
         class: PHPStan\Rules\Operators\OperatorRuleHelper
+    -
+        class: PHPStan\Rules\Cast\UselessCastRule
+        arguments:
+            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
+        tags:
+            - phpstan.rules.rule
