@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace MattyG\StateMachine\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use MattyG\StateMachine\Event\BasicEventDispatcher;
 use MattyG\StateMachine\Event\GuardEvent;
 use MattyG\StateMachine\StateMachine;
 use MattyG\StateMachine\TransitionBlocker;
@@ -86,12 +86,12 @@ class StateMachineTest extends TestCase
     {
         $definition = $this->createComplexStateMachineDefinition2();
 
-        $dispatcher = new EventDispatcher();
-        $net = new StateMachine($definition, null, $dispatcher);
-
+        $dispatcher = new BasicEventDispatcher();
         $dispatcher->addListener('statemachine.guard', function (GuardEvent $event) {
             $event->addTransitionBlocker(new TransitionBlocker(sprintf('Transition blocker of place %s', $event->getPreviousState()), 'blocker'));
         });
+
+        $net = new StateMachine($definition, null, $dispatcher);
 
         $subject = new Subject();
 

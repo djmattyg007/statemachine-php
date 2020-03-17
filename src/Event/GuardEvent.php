@@ -47,7 +47,7 @@ final class GuardEvent extends Event
      */
     public function isBlocked(): bool
     {
-        return !$this->transitionBlockerList->isEmpty();
+        return $this->transitionBlockerList->isEmpty() === false;
     }
 
     /**

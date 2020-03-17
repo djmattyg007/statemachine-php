@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace MattyG\StateMachine\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use MattyG\StateMachine\Definition;
+use MattyG\StateMachine\Event\BasicEventDispatcher;
 use MattyG\StateMachine\Event\Event;
+use MattyG\StateMachine\Event\EventDispatcherInterface;
 use MattyG\StateMachine\Event\GuardEvent;
 use MattyG\StateMachine\Event\TransitionEvent;
 use MattyG\StateMachine\Exception\LogicException;
@@ -93,7 +94,8 @@ class WorkflowTest extends TestCase
     {
         $definition = $this->createComplexStateMachineDefinition1();
         $subject = new Subject('a');
-        $eventDispatcher = new EventDispatcher();
+
+        $eventDispatcher = new BasicEventDispatcher();
         $eventDispatcher->addListener('statemachine.guard.statemachine_name.t1-1', function (GuardEvent $event) {
             $event->setBlocked(true);
         });
@@ -108,7 +110,7 @@ class WorkflowTest extends TestCase
         $subject = new Subject('a');
 
         $dispatchedEvents = [];
-        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher = new BasicEventDispatcher();
 
         $stateMachine = new StateMachine($definition, null, $eventDispatcher, 'statemachine_name');
         $stateMachine->apply($subject, 't1-1');
@@ -227,9 +229,8 @@ class WorkflowTest extends TestCase
     {
         $definition = $this->createSimpleStateMachineDefinition();
         $subject = new Subject('a');
-        $dispatcher = new EventDispatcher();
-        $stateMachine = new StateMachine($definition, null, $dispatcher);
 
+        $dispatcher = new BasicEventDispatcher();
         $dispatcher->addListener('statemachine.guard', function (GuardEvent $event) {
             $event->addTransitionBlocker(new TransitionBlocker('Transition blocker 1', 'blocker_1'));
             $event->addTransitionBlocker(new TransitionBlocker('Transition blocker 2', 'blocker_2'));
@@ -240,6 +241,8 @@ class WorkflowTest extends TestCase
         $dispatcher->addListener('statemachine.guard', function (GuardEvent $event) {
             $event->setBlocked(true);
         });
+
+        $stateMachine = new StateMachine($definition, null, $dispatcher);
 
         $transitionBlockerList = $stateMachine->buildTransitionBlockerList($subject, 't1');
         $this->assertCount(4, $transitionBlockerList);
@@ -432,10 +435,12 @@ class WorkflowTest extends TestCase
     {
         $definition = $this->createComplexStateMachineDefinition1();
         $subject = new Subject('a');
-        $eventDispatcher = new EventDispatcher();
+
+        $eventDispatcher = new BasicEventDispatcher();
         $eventDispatcher->addListener('statemachine.transition', function (TransitionEvent $event) {
             $event->setContext(array_merge($event->getContext(), ['user' => 'admin']));
         });
+
         $stateMachine = new StateMachine($definition, null, $eventDispatcher);
 
         $stateMachine->apply($subject, 't1-1', ['foo' => 'bar']);
@@ -447,7 +452,8 @@ class WorkflowTest extends TestCase
     {
         $definition = $this->createComplexStateMachineDefinition1();
         $subject = new Subject('a');
-        $dispatcher = new EventDispatcher();
+
+        $dispatcher = new BasicEventDispatcher();
         $name = 'statemachine_name';
         $stateMachine = new StateMachine($definition, null, $dispatcher, $name);
 
@@ -475,13 +481,15 @@ class WorkflowTest extends TestCase
     {
         $definition = $this->createComplexStateMachineDefinition1();
         $subject = new Subject('a');
-        $eventDispatcher = new EventDispatcher();
+
+        $eventDispatcher = new BasicEventDispatcher();
         $eventDispatcher->addListener('statemachine.guard.statemachine_name.t1-1', function (GuardEvent $event) {
             $event->setBlocked(true);
         });
         $eventDispatcher->addListener('statemachine.guard.statemachine_name.t1-2', function (GuardEvent $event) {
             $event->setBlocked(true);
         });
+
         $stateMachine = new StateMachine($definition, null, $eventDispatcher, 'statemachine_name');
 
         $this->assertEmpty($stateMachine->getEnabledTransitions($subject));
@@ -522,42 +530,19 @@ class WorkflowTest extends TestCase
     }
 }
 
-class EventDispatcherMock implements \Symfony\Component\EventDispatcher\EventDispatcherInterface
+class EventDispatcherMock implements EventDispatcherInterface
 {
+    /**
+     * @var string[]
+     */
     public $dispatchedEvents = [];
 
-    public function dispatch($event, string $eventName = null): object
+    /**
+     * @param string $eventName
+     * @param Event $event
+     */
+    public function dispatch(string $eventName, Event $event): void
     {
         $this->dispatchedEvents[] = $eventName;
-
-        return $event;
-    }
-
-    public function addListener($eventName, $listener, $priority = 0)
-    {
-    }
-
-    public function addSubscriber(\Symfony\Component\EventDispatcher\EventSubscriberInterface $subscriber)
-    {
-    }
-
-    public function removeListener($eventName, $listener)
-    {
-    }
-
-    public function removeSubscriber(\Symfony\Component\EventDispatcher\EventSubscriberInterface $subscriber)
-    {
-    }
-
-    public function getListeners($eventName = null): array
-    {
-    }
-
-    public function getListenerPriority($eventName, $listener): ?int
-    {
-    }
-
-    public function hasListeners($eventName = null): bool
-    {
     }
 }

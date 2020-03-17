@@ -16,13 +16,12 @@ namespace MattyG\StateMachine\Event;
 
 use MattyG\StateMachine\TransitionInterface;
 use MattyG\StateMachine\StateMachineInterface;
-use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
-class Event extends BaseEvent
+class Event
 {
     /**
      * @var object

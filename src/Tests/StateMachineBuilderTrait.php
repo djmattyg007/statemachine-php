@@ -17,6 +17,7 @@ namespace MattyG\StateMachine\Tests;
 use MattyG\StateMachine\Definition;
 use MattyG\StateMachine\Metadata\InMemoryMetadataStore;
 use MattyG\StateMachine\Transition;
+use SplObjectStorage;
 
 trait StateMachineBuilderTrait
 {
@@ -35,7 +36,7 @@ trait StateMachineBuilderTrait
         $transitions[] = new Transition('t5', 'e', 'g');
         $transitions[] = new Transition('t6', 'f', 'g');
 
-        $transitionsMetadata = new \SplObjectStorage();
+        $transitionsMetadata = new SplObjectStorage();
         $transitionsMetadata[$transitionWithMetadataDumpStyle] = [
             'label' => 'My custom transition label 1',
             'color' => 'Red',
@@ -73,7 +74,7 @@ trait StateMachineBuilderTrait
             'description' => 'My custom place description',
         ];
 
-        $transitionsMetadata = new \SplObjectStorage();
+        $transitionsMetadata = new SplObjectStorage();
         $transitionsMetadata[$transitionWithMetadataDumpStyle] = [
             'label' => 'My custom transition label 2',
             'color' => 'Grey',
@@ -133,7 +134,7 @@ trait StateMachineBuilderTrait
         $transitions[] = $transitionWithMetadataArrowColorBlue;
         $transitions[] = new Transition('t3', 'b', 'd');
 
-        $transitionsMetadata = new \SplObjectStorage();
+        $transitionsMetadata = new SplObjectStorage();
         $transitionsMetadata[$transitionWithMetadataDumpStyle] = [
             'label' => 'My custom transition label 3',
             'color' => 'Grey',

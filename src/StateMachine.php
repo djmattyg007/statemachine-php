@@ -18,6 +18,7 @@ use MattyG\StateMachine\Event\AnnounceEvent;
 use MattyG\StateMachine\Event\CompletedEvent;
 use MattyG\StateMachine\Event\EnteredEvent;
 use MattyG\StateMachine\Event\EnterEvent;
+use MattyG\StateMachine\Event\EventDispatcherInterface;
 use MattyG\StateMachine\Event\GuardEvent;
 use MattyG\StateMachine\Event\LeaveEvent;
 use MattyG\StateMachine\Event\TransitionEvent;
@@ -27,7 +28,8 @@ use MattyG\StateMachine\Exception\UndefinedTransitionException;
 use MattyG\StateMachine\Metadata\MetadataStoreInterface;
 use MattyG\StateMachine\StateAccessor\MethodStateAccessor;
 use MattyG\StateMachine\StateAccessor\StateAccessorInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
+use function sprintf;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -301,15 +303,15 @@ class StateMachine implements StateMachineInterface
      */
     private function guardTransition(object $subject, TransitionInterface $transition): ?GuardEvent
     {
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return null;
         }
 
         $event = new GuardEvent($subject, $transition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.guard');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.guard.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.guard.%s.%s', $this->name, $transition->getName()));
+        $this->dispatcher->dispatch('statemachine.guard', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.guard.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.guard.%s.%s', $this->name, $transition->getName()), $event);
 
         return $event;
     }
@@ -323,15 +325,15 @@ class StateMachine implements StateMachineInterface
     {
         $transition->checkCanLeave($subject, $this);
 
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return;
         }
 
         $event = new LeaveEvent($subject, $transition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.leave');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.leave.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.leave.%s.%s', $this->name, $transition->getFrom()));
+        $this->dispatcher->dispatch('statemachine.leave', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.leave.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.leave.%s.%s', $this->name, $transition->getFrom()), $event);
     }
 
     /**
@@ -343,15 +345,15 @@ class StateMachine implements StateMachineInterface
      */
     private function transition(object $subject, TransitionInterface $transition, array $context): array
     {
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return $context;
         }
 
         $event = new TransitionEvent($subject, $transition, $this, $context);
 
-        $this->dispatcher->dispatch($event, 'statemachine.transition');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.transition.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.transition.%s.%s', $this->name, $transition->getName()));
+        $this->dispatcher->dispatch('statemachine.transition', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.transition.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.transition.%s.%s', $this->name, $transition->getName()), $event);
 
         return $event->getContext();
     }
@@ -365,15 +367,15 @@ class StateMachine implements StateMachineInterface
     {
         $transition->checkCanEnter($subject, $this);
 
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return;
         }
 
         $event = new EnterEvent($subject, $transition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.enter');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.enter.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.enter.%s.%s', $this->name, $transition->getTo()));
+        $this->dispatcher->dispatch('statemachine.enter', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.enter.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.enter.%s.%s', $this->name, $transition->getTo()), $event);
     }
 
     /**
@@ -382,15 +384,15 @@ class StateMachine implements StateMachineInterface
      */
     private function entered(object $subject, TransitionInterface $transition): void
     {
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return;
         }
 
         $event = new EnteredEvent($subject, $transition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.entered');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.entered.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.entered.%s.%s', $this->name, $transition->getTo()));
+        $this->dispatcher->dispatch('statemachine.entered', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.entered.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.entered.%s.%s', $this->name, $transition->getTo()), $event);
     }
 
     /**
@@ -399,15 +401,15 @@ class StateMachine implements StateMachineInterface
      */
     private function completed(object $subject, TransitionInterface $transition): void
     {
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return;
         }
 
         $event = new CompletedEvent($subject, $transition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.completed');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.completed.%s', $this->name));
-        $this->dispatcher->dispatch($event, sprintf('statemachine.completed.%s.%s', $this->name, $transition->getName()));
+        $this->dispatcher->dispatch('statemachine.completed', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.completed.%s', $this->name), $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.completed.%s.%s', $this->name, $transition->getName()), $event);
     }
 
     /**
@@ -416,17 +418,17 @@ class StateMachine implements StateMachineInterface
      */
     private function announce(object $subject, TransitionInterface $initialTransition): void
     {
-        if (null === $this->dispatcher) {
+        if ($this->dispatcher === null) {
             return;
         }
 
         $event = new AnnounceEvent($subject, $initialTransition, $this);
 
-        $this->dispatcher->dispatch($event, 'statemachine.announce');
-        $this->dispatcher->dispatch($event, sprintf('statemachine.announce.%s', $this->name));
+        $this->dispatcher->dispatch('statemachine.announce', $event);
+        $this->dispatcher->dispatch(sprintf('statemachine.announce.%s', $this->name), $event);
 
         foreach ($this->getEnabledTransitions($subject) as $transition) {
-            $this->dispatcher->dispatch($event, sprintf('statemachine.announce.%s.%s', $this->name, $transition->getName()));
+            $this->dispatcher->dispatch(sprintf('statemachine.announce.%s.%s', $this->name, $transition->getName()), $event);
         }
     }
 }

@@ -16,13 +16,13 @@ namespace MattyG\StateMachine\Tests;
 
 use PHPUnit\Framework\TestCase;
 use MattyG\StateMachine\Definition;
+use MattyG\StateMachine\Event\EventDispatcherInterface;
 use MattyG\StateMachine\Exception\InvalidArgumentException;
 use MattyG\StateMachine\Registry;
 use MattyG\StateMachine\StateAccessor\StateAccessorInterface;
 use MattyG\StateMachine\SupportStrategy\StateMachineSupportStrategyInterface;
 use MattyG\StateMachine\Transition;
 use MattyG\StateMachine\StateMachine;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use stdClass;
 
 class RegistryTest extends TestCase
