@@ -31,7 +31,9 @@ final class GuardEvent extends Event
     private $transitionBlockerList;
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param TransitionInterface $transition
+     * @param StateMachineInterface $stateMachine
      */
     public function __construct(object $subject, TransitionInterface $transition, StateMachineInterface $stateMachine)
     {

@@ -25,7 +25,9 @@ final class TransitionEvent extends Event
     private $context;
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param TransitionInterface $transition
+     * @param StateMachineInterface $stateMachine
      * @param array $context
      */
     public function __construct(object $subject, TransitionInterface $transition, StateMachineInterface $stateMachine, array $context = [])
